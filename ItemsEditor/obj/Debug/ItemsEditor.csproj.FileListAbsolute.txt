@@ -16,3 +16,21 @@ c:\users\rnmkr\documents\visual studio 2017\Projects\ItemsEditor\ItemsEditor\bin
 c:\users\rnmkr\documents\visual studio 2017\Projects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.SqlServer.dll
 c:\users\rnmkr\documents\visual studio 2017\Projects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.xml
 c:\users\rnmkr\documents\visual studio 2017\Projects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.SqlServer.xml
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\ItemsEditor.exe.config
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\ItemsEditor.exe
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\ItemsEditor.pdb
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.dll
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.SqlServer.dll
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.xml
+D:\VSprojects\ItemsEditor\ItemsEditor\bin\Debug\EntityFramework.SqlServer.xml
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.csprojResolveAssemblyReference.cache
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\MainWindow.g.cs
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\App.g.cs
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor_MarkupCompile.cache
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor_MarkupCompile.lref
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\MainWindow.baml
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.g.resources
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.Properties.Resources.resources
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.csproj.GenerateResource.Cache
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.exe
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.pdb

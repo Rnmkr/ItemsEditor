@@ -29,16 +29,17 @@ namespace ItemsEditor
         string DescripcionSeleccionada = "DESCRIPCION";
         string UUIDSeleccionado = "UUID";
         string itemsPath;
-        string filenameAuto = "";
-        string filenameManual = "";
+        string filePath;
+        string filenameAuto;
+        string filenameManual;
 
         public MainWindow()
         {
             InitializeComponent();
-            ReadDefaultImgPath();
+            ReadDefaultItemsPath();
         }
 
-        private void ReadDefaultImgPath()
+        private void ReadDefaultItemsPath()
         {
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\" + "defaultpath.cfg"))
             {
@@ -78,7 +79,7 @@ namespace ItemsEditor
             }
             else
             {
-                System.Windows.MessageBox.Show("No hay un item seleccionado!", "Borrar Item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("No hay un item seleccionado!" + Environment.NewLine + "Seleccione todos los campos primero!", "Borrar Item", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -154,9 +155,13 @@ namespace ItemsEditor
                 System.Windows.MessageBox.Show("No hay un item para actualizar!" + Environment.NewLine + "Recuerde primero buscar un item seleccionando cada campo.", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-
         private void Agregar_Click(object sender, RoutedEventArgs e)
         {
+            if (ComboProducto.Text == "PRODUCTO" || ComboModelo.Text == "MODELO" || ComboArticulo.Text == "ARTICULO" || ComboCategoria.Text == "CATEGORIA" || ComboVersion.Text == "VERSION" || TextBoxDescripcion.Text == "DESCRIPCION")
+            {
+                System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text && o.DescripcionItem == TextBoxDescripcion.Text && o.UUID == TextBoxUUID.Text))
             {
                 System.Windows.MessageBox.Show("El item que desea agregar ya existe en la Base de Datos!", "Item duplicado!", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -166,15 +171,26 @@ namespace ItemsEditor
                 if (filenameManual == null && filenameAuto == null)
                 {
                     System.Windows.MessageBox.Show("No se puede ingresar el registro sin asignar una imagen!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    LoadImage();
                 }
                 else
                 {
                     if (String.IsNullOrEmpty(ComboArticulo.Text) || String.IsNullOrEmpty(ComboProducto.Text) || String.IsNullOrEmpty(ComboModelo.Text) || String.IsNullOrEmpty(ComboCategoria.Text) || String.IsNullOrEmpty(TextBoxDescripcion.Text) || String.IsNullOrEmpty(ComboVersion.Text) || String.IsNullOrEmpty(TextBoxUUID.Text))
                     {
-                        System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios, asegurese de completar todos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
                     }
                     else
                     {
+                        if (TextBoxUUID.Text == "UUID" || String.IsNullOrEmpty(TextBoxUUID.Text))
+                        {
+                            UUIDSeleccionado = "N/A";
+                        }
+                        else
+                        {
+                            UUIDSeleccionado = TextBoxUUID.Text;
+                        }
+
                         try
                         {
                             Item nuevoItem = new Item
@@ -185,15 +201,18 @@ namespace ItemsEditor
                                 CategoriaItem = ComboCategoria.Text.ToUpper(),
                                 DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
                                 VersionItem = ComboVersion.Text.ToUpper(),
-                                UUID = TextBoxUUID.Text,
+                                UUID = UUIDSeleccionado,
 
                             };
                             context.Item.Add(nuevoItem);
                             context.SaveChanges();
+                            saveImage();
 
                             if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text && o.DescripcionItem == TextBoxDescripcion.Text && o.UUID == TextBoxUUID.Text))
                             {
                                 System.Windows.MessageBox.Show("El item se agregó a la Base de Datos!", "Item Agregado", MessageBoxButton.OK, MessageBoxImage.Information);
+                                ItemID = 0;
+                                ResetFields();
                             }
                             else
                             {
@@ -202,9 +221,11 @@ namespace ItemsEditor
                                 ResetFields();
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            MessageBox.Show("1) Ocurrió un error al intentar ingresar los datos. Revise los campos y vuelva a intentar, o revise la conexión con la Base de Datos.", "¿Alguno de los datos ingresados no es válido?", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                            MessageBox.Show(ex.ToString(), "¿Alguno de los datos ingresados no es válido?", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            ItemID = 0;
                         }
                     }
 
@@ -215,45 +236,11 @@ namespace ItemsEditor
 
         private void File_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".jpg";
-            dlg.Filter = "Sólo Archivos JPG (*.jpg, *.jpg)|*.jpg";
-            Nullable<bool> result = dlg.ShowDialog();
-            if (result == true)
-            {
-                filenameManual = dlg.FileName;
-                var bitmapFrame = BitmapFrame.Create(new Uri(filenameManual), BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-                int width = bitmapFrame.PixelWidth;
-                int height = bitmapFrame.PixelHeight;
-                if (width > 960)
-                {
-                    System.Windows.MessageBox.Show("...el ancho de la imagen es mayor a 960 píxeles, considere editar la imagen para dejarlo cerca de este valor y asi reducir su peso.", "La imagen se cargará, pero...", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-                if (height > 480)
-                {
-                    System.Windows.MessageBox.Show("...el alto de la imagen es mayor a 480 píxeles, considere editar la imagen para dejarlo cerca de este valor y asi reducir su peso.", "La imagen se cargará, pero...", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-
-                TextBoxFile.Text = filenameManual;
-                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString(filenameManual) as ImageSource;
-            }
+            LoadImage();
         }
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
-            WinForms.FolderBrowserDialog folderDialog = new WinForms.FolderBrowserDialog();
-            folderDialog.ShowNewFolderButton = false;
-            folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            WinForms.DialogResult result = folderDialog.ShowDialog();
-
-            if (result == WinForms.DialogResult.OK)
-            {
-                String sPath = folderDialog.SelectedPath;
-                TextBoxFolder.Text = sPath;
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"\" + "defaultpath.cfg", sPath);
-                itemsPath = sPath;
-
-
-            }
+            LoadFolder();
         }
 
         private void ResetFields()
@@ -266,7 +253,7 @@ namespace ItemsEditor
             TextBoxDescripcion.Text = "DESCRIPCION";
             TextBoxUUID.Text = "UUID";
             TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
-            TextBoxFolder.Text = "SELECCIONAR CARPETA DESTINO (ITEMS)";
+            //TextBoxFolder.Text = "SELECCIONAR CARPETA DESTINO (ITEMS)";
 
             ComboProducto.SelectedIndex = -1;
             ComboModelo.SelectedIndex = -1;
@@ -292,6 +279,48 @@ namespace ItemsEditor
             filenameManual = null;
             ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
         }
+        private void LoadFolder()
+        {
+            WinForms.FolderBrowserDialog folderDialog = new WinForms.FolderBrowserDialog();
+            folderDialog.ShowNewFolderButton = false;
+            folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            WinForms.DialogResult result = folderDialog.ShowDialog();
+
+            if (result == WinForms.DialogResult.OK)
+            {
+                String sPath = folderDialog.SelectedPath;
+                TextBoxFolder.Text = sPath;
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"\" + "defaultpath.cfg", sPath);
+                itemsPath = sPath;
+
+
+            }
+        }
+        private void LoadImage()
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.DefaultExt = ".jpg";
+            dlg.Filter = "Sólo Archivos JPG (*.jpg, *.jpg)|*.jpg";
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            {
+                filenameManual = dlg.FileName;
+                var bitmapFrame = BitmapFrame.Create(new Uri(filenameManual), BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+                int width = bitmapFrame.PixelWidth;
+                int height = bitmapFrame.PixelHeight;
+                if (width > 960)
+                {
+                    System.Windows.MessageBox.Show("...el ancho de la imagen es mayor a 960 píxeles, considere editar la imagen para dejarlo cerca de este valor y asi reducir su peso.", "La imagen se cargará, pero...", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                if (height > 480)
+                {
+                    System.Windows.MessageBox.Show("...el alto de la imagen es mayor a 480 píxeles, considere editar la imagen para dejarlo cerca de este valor y asi reducir su peso.", "La imagen se cargará, pero...", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                TextBoxFile.Text = filenameManual;
+                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString(filenameManual) as ImageSource;
+            }
+        }
         private void checkImages()
         {
             if (filenameAuto == null && filenameManual == null)
@@ -301,7 +330,7 @@ namespace ItemsEditor
 
             if (filenameAuto != null && filenameManual == null)
             {
-                System.Windows.MessageBox.Show(filenameAuto.ToString() + filenameManual.ToString() + "2.1)No se encontraron cambios para actualizar!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
             if (filenameAuto == null && filenameManual != null)
@@ -327,31 +356,66 @@ namespace ItemsEditor
         }
         private bool ImageCompareString()
         {
-            Bitmap firstImage = new Bitmap(filenameAuto);
-            Bitmap secondImage = new Bitmap(filenameManual);
-            MemoryStream ms = new MemoryStream();
-            firstImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            String firstBitmap = Convert.ToBase64String(ms.ToArray());
-            ms.Position = 0;
+            try
+            {
+                Bitmap firstImage = new Bitmap(filenameAuto);
+                Bitmap secondImage = new Bitmap(filenameManual);
+                MemoryStream ms = new MemoryStream();
+                firstImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                String firstBitmap = Convert.ToBase64String(ms.ToArray());
+                ms.Position = 0;
 
-            secondImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            String secondBitmap = Convert.ToBase64String(ms.ToArray());
-            if (firstBitmap.Equals(secondBitmap))
-            {
-                firstImage.Dispose();
-                return true;
+                secondImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                String secondBitmap = Convert.ToBase64String(ms.ToArray());
+                if (firstBitmap.Equals(secondBitmap))
+                {
+                    firstImage.Dispose();
+                    return true;
+                }
+                else
+                {
+                    firstImage.Dispose();
+                    return false;
+                }
             }
-            else
+            catch (Exception)
             {
-                firstImage.Dispose();
-                return false;
+                return true;
             }
         }
         private void saveImage()
         {
-           
-            File.Copy(filenameManual, filenameAuto, true);
+            if (filePath == null)
+            {
+                filePath = (itemsPath + @"\" + ComboProducto.Text + @"\" + ComboModelo.Text + @"\" + ComboCategoria.Text + @"\" + ComboArticulo.Text);
+            }
+
+            try
+            {
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("no existe el filepath?", "¿Alguno de los datos ingresados no es válido?", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            if (filenameAuto == null)
+            {
+                filenameAuto = (itemsPath + filePath + ComboVersion.Text + ".JPG");
+            }
+
+            if (filenameManual == null)
+            {
+                filenameManual = (itemsPath + filePath + ComboVersion.Text + ".JPG");
+            }
+
+            File.Copy(filenameManual, filenameAuto, true); //checkear rutas
+
         }
+
 
         private void TextBoxDescripcion_GotFocus(object sender, RoutedEventArgs e)
         {

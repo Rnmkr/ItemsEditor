@@ -15,7 +15,7 @@ namespace ItemsEditor
     /// </summary>
     public partial class MainWindow : Window
     {
-        PRDB context = new PRDB();
+
         IQueryable<Item> ListaModelos;
         IQueryable<Item> ListaArticulos;
         IQueryable<Item> ListaCategorias;
@@ -92,6 +92,7 @@ namespace ItemsEditor
         {
             if (ItemID != 0)
             {
+                PRDB context = new PRDB();
                 var update = context.Item.Where(w => w.ID == ItemID).First();
 
                 if (update.TipoProducto == ComboProducto.Text && update.ModeloProducto == ComboModelo.Text && update.ArticuloItem == ComboArticulo.Text && update.CategoriaItem == ComboCategoria.Text && update.VersionItem == ComboVersion.Text && update.DescripcionItem == TextBoxDescripcion.Text && update.UUID == TextBoxUUID.Text)
@@ -157,83 +158,70 @@ namespace ItemsEditor
         }
         private void Agregar_Click(object sender, RoutedEventArgs e)
         {
+            PRDB context = new PRDB();
+
             if (ComboProducto.Text == "PRODUCTO" || ComboModelo.Text == "MODELO" || ComboArticulo.Text == "ARTICULO" || ComboCategoria.Text == "CATEGORIA" || ComboVersion.Text == "VERSION" || TextBoxDescripcion.Text == "DESCRIPCION")
             {
                 System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text && o.DescripcionItem == TextBoxDescripcion.Text && o.UUID == TextBoxUUID.Text))
+
+            if (String.IsNullOrEmpty(ComboArticulo.Text) || String.IsNullOrEmpty(ComboProducto.Text) || String.IsNullOrEmpty(ComboModelo.Text) || String.IsNullOrEmpty(ComboCategoria.Text) || String.IsNullOrEmpty(TextBoxDescripcion.Text) || String.IsNullOrEmpty(ComboVersion.Text) || String.IsNullOrEmpty(TextBoxUUID.Text))
+            {
+                System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text))
             {
                 System.Windows.MessageBox.Show("El item que desea agregar ya existe en la Base de Datos!", "Item duplicado!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                context.Dispose();
+                return;
+            }
+
+            if (TextBoxUUID.Text == "UUID" || String.IsNullOrEmpty(TextBoxUUID.Text))
+            {
+                UUIDSeleccionado = "N/A";
             }
             else
             {
-                if (filenameManual == null && filenameAuto == null)
-                {
-                    System.Windows.MessageBox.Show("No se puede ingresar el registro sin asignar una imagen!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    LoadImage();
-                }
-                else
-                {
-                    if (String.IsNullOrEmpty(ComboArticulo.Text) || String.IsNullOrEmpty(ComboProducto.Text) || String.IsNullOrEmpty(ComboModelo.Text) || String.IsNullOrEmpty(ComboCategoria.Text) || String.IsNullOrEmpty(TextBoxDescripcion.Text) || String.IsNullOrEmpty(ComboVersion.Text) || String.IsNullOrEmpty(TextBoxUUID.Text))
-                    {
-                        System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-                    else
-                    {
-                        if (TextBoxUUID.Text == "UUID" || String.IsNullOrEmpty(TextBoxUUID.Text))
-                        {
-                            UUIDSeleccionado = "N/A";
-                        }
-                        else
-                        {
-                            UUIDSeleccionado = TextBoxUUID.Text;
-                        }
-
-                        try
-                        {
-                            Item nuevoItem = new Item
-                            {
-                                TipoProducto = ComboProducto.Text.ToUpper(),
-                                ModeloProducto = ComboModelo.Text.ToUpper(),
-                                ArticuloItem = ComboArticulo.Text.ToUpper(),
-                                CategoriaItem = ComboCategoria.Text.ToUpper(),
-                                DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
-                                VersionItem = ComboVersion.Text.ToUpper(),
-                                UUID = UUIDSeleccionado,
-
-                            };
-                            context.Item.Add(nuevoItem);
-                            context.SaveChanges();
-                            saveImage();
-
-                            if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text && o.DescripcionItem == TextBoxDescripcion.Text && o.UUID == TextBoxUUID.Text))
-                            {
-                                System.Windows.MessageBox.Show("El item se agregó a la Base de Datos!", "Item Agregado", MessageBoxButton.OK, MessageBoxImage.Information);
-                                ItemID = 0;
-                                ResetFields();
-                            }
-                            else
-                            {
-                                System.Windows.MessageBox.Show("No se pudo ingresar registro!", "Error agregando registro!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                                ItemID = 0;
-                                ResetFields();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-
-                            MessageBox.Show(ex.ToString(), "¿Alguno de los datos ingresados no es válido?", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            ItemID = 0;
-                        }
-                    }
-
-                }
+                UUIDSeleccionado = TextBoxUUID.Text;
             }
 
-        }
+            if (filenameManual == null && filenameAuto == null)
+            {
+                System.Windows.MessageBox.Show("No se puede ingresar el registro sin asignar una imagen!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                LoadImage();
+            }
 
+            try
+            {
+                Item nuevoItem = new Item
+                {
+                    TipoProducto = ComboProducto.Text.ToUpper(),
+                    ModeloProducto = ComboModelo.Text.ToUpper(),
+                    ArticuloItem = ComboArticulo.Text.ToUpper(),
+                    CategoriaItem = ComboCategoria.Text.ToUpper(),
+                    DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
+                    VersionItem = ComboVersion.Text.ToUpper(),
+                    UUID = UUIDSeleccionado,
+
+                };
+                context.Item.Add(nuevoItem);
+                context.SaveChanges();
+                saveImage();
+                System.Windows.MessageBox.Show("El item se agregó a la Base de Datos!", "Item Agregado", MessageBoxButton.OK, MessageBoxImage.Information);
+                context.Dispose();
+                ResetFields();
+                return;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("No se pudo ingresar el registro!", "¿Alguno de los datos ingresados no es válido?", MessageBoxButton.OK, MessageBoxImage.Warning);
+                context.Dispose();
+                return;
+            }
+        }
         private void File_Click(object sender, RoutedEventArgs e)
         {
             LoadImage();
@@ -462,6 +450,7 @@ namespace ItemsEditor
             {
                 try
                 {
+                    PRDB context = new PRDB();
                     ComboProducto.ItemsSource = context.Item.Select(s => s.TipoProducto).Distinct().ToList();
                 }
                 catch (SqlException)
@@ -505,6 +494,7 @@ namespace ItemsEditor
             }
             else
             {
+                PRDB context = new PRDB();
                 ListaModelos = context.Item.Where(w => w.TipoProducto == ProductoSeleccionado).Select(s => s);
                 ComboModelo.ItemsSource = ListaModelos.Select(s => s.ModeloProducto).Distinct().ToList();
             }

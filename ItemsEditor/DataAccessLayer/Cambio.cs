@@ -7,7 +7,7 @@ namespace ItemsEditor
     using System.Data.Entity.Spatial;
 
     [Table("CambioRMA")]
-    public partial class CambioRMA
+    public partial class Cambio
     {
         public int ID { get; set; }
 

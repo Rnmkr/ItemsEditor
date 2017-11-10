@@ -17,7 +17,7 @@
         <Button Name="Borrar" Content="BORRAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,421,0,0" Height="32" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Borra la entrada del Item de la Base de Datos." Click="Borrar_Click"/>
         <Button Name="Actualizar" Content="ACTUALIZAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,458,0,0" Height="32" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Borra la entrada del Item de la Base de Datos." Click="Actualizar_Click"/>
         <Button Name="Reset" Content="REESTABLECER CAMPOS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,384,0,0" Height="32" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Vuelve todos los campos de este formulario a su estado inicial." Click="Reset_Click"/>
-        <Button Name="Agregar" Content="AGREGAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,495,0,0" Height="32" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Agrega el Item a la Base de Datos." Click="Agregar_Click"/>
+        <Button Name="Agregar" Content="AGREGAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,495,0,0" Height="32" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Agrega el Item a la Base de Datos." Click="InsertarNuevo_Click"/>
         <Border Width="960" Height="480" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,10,0" BorderThickness="1" BorderBrush="Black">
             <Image Name="ImageDisplay" Source="/ItemsEditor;component/Resources/nophoto.png" HorizontalAlignment="Stretch" Height="480" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="960"/>
         </Border>

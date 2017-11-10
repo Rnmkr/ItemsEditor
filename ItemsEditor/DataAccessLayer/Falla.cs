@@ -7,7 +7,7 @@ namespace ItemsEditor
     using System.Data.Entity.Spatial;
 
     [Table("ListaFallasRMA")]
-    public partial class ListaFallasRMA
+    public partial class Falla
     {
         public int ID { get; set; }
 

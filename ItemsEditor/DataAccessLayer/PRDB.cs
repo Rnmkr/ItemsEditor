@@ -12,87 +12,87 @@ namespace ItemsEditor
         {
         }
 
-        public virtual DbSet<CambioRMA> CambioRMA { get; set; }
+        public virtual DbSet<Cambio> Cambio { get; set; }
         public virtual DbSet<Item> Item { get; set; }
-        public virtual DbSet<ListaFallasRMA> ListaFallasRMA { get; set; }
+        public virtual DbSet<Falla> Falla { get; set; }
         public virtual DbSet<Pedido> Pedido { get; set; }
         public virtual DbSet<Personal> Personal { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.NumeroLegajoTecnico)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.NombreTecnico)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.ApellidoTecnico)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.FechaCambio)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.HoraCambio)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.NumeroPedido)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.TipoProducto)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.ModeloProducto)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.ArticuloItem)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.CategoriaItem)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.DescripcionItem)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.VersionItem)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.SerialNumberItem)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.CodigoFalla)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.DescripcionFalla)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.Observaciones)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.EstadoCambio)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.SupervisorModificacion)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<CambioRMA>()
+            modelBuilder.Entity<Cambio>()
                 .Property(e => e.FechaModificacion)
                 .IsUnicode(false);
 
@@ -124,15 +124,15 @@ namespace ItemsEditor
                 .Property(e => e.UUID)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ListaFallasRMA>()
+            modelBuilder.Entity<Falla>()
                 .Property(e => e.CodigoFalla)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ListaFallasRMA>()
+            modelBuilder.Entity<Falla>()
                 .Property(e => e.CategoriaFalla)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ListaFallasRMA>()
+            modelBuilder.Entity<Falla>()
                 .Property(e => e.DescripcionFalla)
                 .IsUnicode(false);
 

@@ -27,7 +27,7 @@ namespace ItemsEditor
         string VersionSeleccionada;
         string DescripcionSeleccionada = "DESCRIPCION";
         string UUIDSeleccionado = "UUID";
-
+        bool OnlySaveImage = false;
         string LocalDir = AppDomain.CurrentDomain.BaseDirectory;
 
         string ItemsFolderPath; //ruta a la carpeta Items
@@ -61,7 +61,7 @@ namespace ItemsEditor
         {
             if (ItemID != 0)
             {
-                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("¿Está seguro que desea borrar este Item?", "Confirmacion de borrado", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Esta a punto de borrar el item:" + Environment.NewLine + ProductoSeleccionado + Environment.NewLine + ModeloSeleccionado + Environment.NewLine + CategoriaSeleccionada + Environment.NewLine + ArticuloSeleccionado + Environment.NewLine + DescripcionSeleccionada + Environment.NewLine + Environment.NewLine + "¿Está seguro?", "Confirmacion de borrado", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     PRDB context = new PRDB();
@@ -92,77 +92,15 @@ namespace ItemsEditor
         {
             ResetFields();
         }
-        private void Actualizar_Click(object sender, RoutedEventArgs e)
+        private void Agregar_Click(object sender, RoutedEventArgs e)
         {
-            if (ItemID != 0)
+            if (OnlySaveImage == true)
             {
-                PRDB context = new PRDB();
-                var update = context.Item.Where(w => w.ID == ItemID).First();
-
-                if (update.TipoProducto == ComboProducto.Text && update.ModeloProducto == ComboModelo.Text && update.ArticuloItem == ComboArticulo.Text && update.CategoriaItem == ComboCategoria.Text && update.VersionItem == ComboVersion.Text && update.DescripcionItem == TextBoxDescripcion.Text && update.UUID == TextBoxUUID.Text)
-                {
-                    CheckImages();
-                }
-                else
-                {
-
-                    if (ComboProducto.Text != update.TipoProducto)
-                    {
-                        update.TipoProducto = ComboProducto.Text;
-                    }
-
-                    if (ComboModelo.Text != update.ModeloProducto)
-                    {
-                        update.ModeloProducto = ComboModelo.Text;
-                    }
-
-                    if (ComboArticulo.Text != update.ArticuloItem)
-                    {
-                        update.ArticuloItem = ComboArticulo.Text;
-                    }
-
-                    if (ComboCategoria.Text != update.CategoriaItem)
-                    {
-                        update.CategoriaItem = ComboCategoria.Text;
-                    }
-
-                    if (ComboVersion.Text != update.VersionItem)
-                    {
-                        update.VersionItem = ComboVersion.Text;
-                    }
-
-                    if (TextBoxDescripcion.Text != update.DescripcionItem)
-                    {
-                        update.DescripcionItem = TextBoxDescripcion.Text;
-                    }
-
-                    if (TextBoxUUID.Text != update.UUID)
-                    {
-                        update.UUID = TextBoxUUID.Text;
-                    }
-
-                    CheckImages();
-                    context.SaveChanges();
-
-                    if (context.Item.Any(o => o.TipoProducto == ComboProducto.Text && o.ModeloProducto == ComboModelo.Text && o.ArticuloItem == ComboArticulo.Text && o.CategoriaItem == ComboCategoria.Text && o.VersionItem == ComboVersion.Text && o.DescripcionItem == TextBoxDescripcion.Text && o.UUID == TextBoxUUID.Text))
-                    {
-                        System.Windows.MessageBox.Show("El item se actualizó correctamente!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        ResetFields();
-                    }
-                    else
-                    {
-                        System.Windows.MessageBox.Show("No se pudo actualizar el item!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                }
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("No hay un item para actualizar!" + Environment.NewLine + "Recuerde primero buscar un item seleccionando cada campo.", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                SaveNewImage();
+                ResetFields();
+                return;
             }
 
-        }
-        private void InsertarNuevo_Click(object sender, RoutedEventArgs e)
-        {
             PRDB context = new PRDB();
 
             if (ComboProducto.Text == "PRODUCTO" || ComboModelo.Text == "MODELO" || ComboArticulo.Text == "ARTICULO" || ComboCategoria.Text == "CATEGORIA" || ComboVersion.Text == "VERSION" || TextBoxDescripcion.Text == "DESCRIPCION")
@@ -193,10 +131,11 @@ namespace ItemsEditor
                 UUIDSeleccionado = TextBoxUUID.Text;
             }
 
-            if (UserImageFile == null && ItemsImageFile == null)
+            if (UserImageFile == null)
             {
                 System.Windows.MessageBox.Show("No se puede ingresar el registro sin asignar una imagen!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
                 LoadNewImage();
+                return;
             }
 
             try
@@ -232,8 +171,6 @@ namespace ItemsEditor
             LoadNewImage();
         }
 
-
-
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
             SelectItemsFolder();
@@ -241,6 +178,7 @@ namespace ItemsEditor
 
         private void ResetFields()
         {
+            Agregar.Content = "AGREGAR";
             ComboProducto.Text = "PRODUCTO";
             ComboModelo.Text = "MODELO";
             ComboArticulo.Text = "ARTICULO";
@@ -270,6 +208,7 @@ namespace ItemsEditor
             DescripcionSeleccionada = "DESCRIPCION";
             UUIDSeleccionado = "UUID";
 
+            OnlySaveImage = false;
             ItemID = 0;
             UserImageFile = null;
             ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
@@ -315,69 +254,6 @@ namespace ItemsEditor
                 ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString(UserImageFile) as ImageSource;
             }
         }
-        private void CheckImages()
-        {
-            SaveNewImage();
-            //if (ItemsImageFile == null && UserImageFile == null)
-            //{
-            //    System.Windows.MessageBox.Show("2.0) No se encontraron cambios para actualizar! Debe asignar una imagen al item!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //}
-
-            //if (ItemsImageFile != null && UserImageFile == null)
-            //{
-            //    return;
-            //}
-
-            //if (ItemsImageFile == null && UserImageFile != null)
-            //{
-            //    SaveNewImage();
-            //    System.Windows.MessageBox.Show("Se actualizo la imagen correctamente!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    ResetFields();
-            //}
-
-            //if (ItemsImageFile != null && UserImageFile != null)
-            //{
-            //    if (ImageCompareString())
-            //    {
-            //        System.Windows.MessageBox.Show("No se encontraron cambios para actualizar!" + Environment.NewLine + "La imagen asignada y la nueva son identicas!", "Actualizar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    }
-            //    else
-            //    {
-            //        SaveNewImage();
-            //        System.Windows.MessageBox.Show("Se actualizo la imagen correctamente!", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //        ResetFields();
-            //    }
-            //}
-        }
-        private bool ImageCompareString()
-        {
-            try
-            {
-                Bitmap firstImage = new Bitmap(ItemsImageFile);
-                Bitmap secondImage = new Bitmap(UserImageFile);
-                MemoryStream ms = new MemoryStream();
-                firstImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                String firstBitmap = Convert.ToBase64String(ms.ToArray());
-                ms.Position = 0;
-
-                secondImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                String secondBitmap = Convert.ToBase64String(ms.ToArray());
-                if (firstBitmap.Equals(secondBitmap))
-                {
-                    firstImage.Dispose();
-                    return true;
-                }
-                else
-                {
-                    firstImage.Dispose();
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-        }
         private void SaveNewImage()
         {
             if (ItemsFolderPath == null)
@@ -393,6 +269,7 @@ namespace ItemsEditor
                     string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text + ".JPG");
                     Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
                     File.Copy(UserImageFile, NewItemsImageFile, true);
+                    System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 catch (Exception ex)
                 {
@@ -401,30 +278,14 @@ namespace ItemsEditor
             }
         }
 
-        private void RefreshImage()
-        {
-            if (ItemsFolderPath == null)
-            {
-                System.Windows.MessageBox.Show("No se encontró la carpeta Items. Seleccione la ubicación correspondiente a continuación.", "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            else
-            {
-                string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text, ".JPG");
-                Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
-                File.Copy(UserImageFile, NewItemsImageFile, true);
-            }
-        }
-
-
         private void TextBoxDescripcion_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (DescripcionSeleccionada == "DESCRIPCION")
+            if (TextBoxDescripcion.Text == "DESCRIPCION")
             {
                 TextBoxDescripcion.Text = "";
             }
 
-            if (DescripcionSeleccionada == "N/A")
+            if (TextBoxDescripcion.Text == "N/A")
             {
                 TextBoxDescripcion.Text = "";
             }
@@ -438,12 +299,12 @@ namespace ItemsEditor
         }
         private void TextBoxUUID_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (UUIDSeleccionado == "UUID")
+            if (TextBoxUUID.Text == "UUID")
             {
                 TextBoxUUID.Text = "";
             }
 
-            if (UUIDSeleccionado == "N/A")
+            if (TextBoxUUID.Text == "N/A")
             {
                 TextBoxUUID.Text = "";
             }
@@ -496,6 +357,10 @@ namespace ItemsEditor
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
                 ItemID = 0;
+                OnlySaveImage = false;
+                TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
+                UserImageFile = null;
+                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
             }
         }
         private void ComboModelo_DropDownOpened(object sender, EventArgs e)
@@ -532,6 +397,10 @@ namespace ItemsEditor
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
                 ItemID = 0;
+                OnlySaveImage = false;
+                TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
+                UserImageFile = null;
+                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
             }
         }
         private void ComboArticulo_DropDownOpened(object sender, EventArgs e)
@@ -563,6 +432,10 @@ namespace ItemsEditor
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
                 ItemID = 0;
+                OnlySaveImage = false;
+                TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
+                UserImageFile = null;
+                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
             }
         }
         private void ComboCategoria_DropDownOpened(object sender, EventArgs e)
@@ -590,6 +463,10 @@ namespace ItemsEditor
                 ComboVersion.ItemsSource = null;
                 VersionSeleccionada = null;
                 ItemID = 0;
+                OnlySaveImage = false;
+                TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
+                UserImageFile = null;
+                ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
             }
         }
         private void ComboVersion_DropDownOpened(object sender, EventArgs e)
@@ -633,8 +510,10 @@ namespace ItemsEditor
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + " Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + Environment.NewLine + "Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
                         LoadNewImage();
+                        OnlySaveImage = true;
+                        Agregar.Content = "ACTUALIZAR IMAGEN";
                     }
                 }
                 else
@@ -644,6 +523,5 @@ namespace ItemsEditor
                 }
             }
         }
-
     }
 }

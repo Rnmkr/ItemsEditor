@@ -39,6 +39,7 @@ namespace ItemsEditor
         {
             InitializeComponent();
             ReadDefaultItemsPath();
+            Borrar.IsEnabled = false;
 
         }
 
@@ -61,12 +62,24 @@ namespace ItemsEditor
         {
             if (ItemID != 0)
             {
-                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Esta a punto de borrar el item:" + Environment.NewLine + ProductoSeleccionado + Environment.NewLine + ModeloSeleccionado + Environment.NewLine + CategoriaSeleccionada + Environment.NewLine + ArticuloSeleccionado + Environment.NewLine + DescripcionSeleccionada + Environment.NewLine + Environment.NewLine + "¿Está seguro?", "Confirmacion de borrado", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
+                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Esta a punto de borrar el item:" + Environment.NewLine + Environment.NewLine + "PRODUCTO: " + ProductoSeleccionado + Environment.NewLine + "MODELO: " +  ModeloSeleccionado + Environment.NewLine + "CATEGORIA: " + CategoriaSeleccionada + Environment.NewLine + "ARTICULO: " + ArticuloSeleccionado + Environment.NewLine + "DESCRIPCIÓN: " + DescripcionSeleccionada + Environment.NewLine + "VERSION: " + VersionSeleccionada + Environment.NewLine + "UUID: " + UUIDSeleccionado + Environment.NewLine + "Tambíen se quitará la imagen correspondiente en el servidor." + Environment.NewLine + Environment.NewLine + "¿Está seguro?", "Confirmacion de borrado", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Exclamation);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
+                    int tempID = ItemID;
                     PRDB context = new PRDB();
                     Item item = context.Item.Where(w => w.ID == ItemID).First();
                     context.Item.Remove(item);
+
+                    try
+                    {
+                        DeleteFileAndDirectory();
+                    }
+                    catch (Exception)
+                    {
+                        System.Windows.MessageBox.Show("No se pudo borrar la Imagen de la base de datos!" + Environment.NewLine + "No se Borrara el registro. Intente nuevamente", "Error eliminando imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
                     context.SaveChanges();
 
                     if (context.Item.Any(o => o.ID == ItemID))
@@ -87,6 +100,53 @@ namespace ItemsEditor
                 System.Windows.MessageBox.Show("No hay un item seleccionado!" + Environment.NewLine + "Seleccione todos los campos primero!", "Borrar Item", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
+        }
+
+        private void DeleteFileAndDirectory()
+        {
+            if (File.Exists(ItemsImageFile))
+            {
+                File.Delete(Path.Combine(ItemsImageFile));
+            }
+            string ArticuloFolder = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado);
+            string CategoriaFolder = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada);
+            string ModeloFolder = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado);
+            string ProductoFolder = Path.Combine(ItemsFolderPath, ProductoSeleccionado);
+            if (!Directory.EnumerateFiles(ArticuloFolder).Any())
+            {
+                Directory.Delete(ArticuloFolder, false);
+            }
+            else
+            {
+                return;
+            }
+
+            if (!Directory.EnumerateFiles(CategoriaFolder).Any())
+            {
+                Directory.Delete(CategoriaFolder, false);
+            }
+            else
+            {
+                return;
+            }
+
+            if (!Directory.EnumerateDirectories(ModeloFolder).Any())
+            {
+                Directory.Delete(ModeloFolder, false);
+            }
+            else
+            {
+                return;
+            }
+
+            if (!Directory.EnumerateDirectories(ProductoFolder).Any())
+            {
+                Directory.Delete(ProductoFolder, false);
+            }
+            else
+            {
+                return;
+            }
         }
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
@@ -148,7 +208,7 @@ namespace ItemsEditor
                     CategoriaItem = ComboCategoria.Text.ToUpper(),
                     DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
                     VersionItem = ComboVersion.Text.ToUpper(),
-                    UUID = UUIDSeleccionado,
+                    UUID = TextBoxUUID.Text,
 
                 };
                 context.Item.Add(nuevoItem);
@@ -208,8 +268,18 @@ namespace ItemsEditor
             DescripcionSeleccionada = "DESCRIPCION";
             UUIDSeleccionado = "UUID";
 
+            Borrar.IsEnabled = false;
             OnlySaveImage = false;
             ItemID = 0;
+            UserImageFile = null;
+            ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
+        }
+        private void HalfReset(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            Borrar.IsEnabled = false;
+            ItemID = 0;
+            OnlySaveImage = false;
+            TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
             UserImageFile = null;
             ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
         }
@@ -252,6 +322,11 @@ namespace ItemsEditor
 
                 TextBoxFile.Text = UserImageFile;
                 ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString(UserImageFile) as ImageSource;
+                if (ItemID != 0)
+                {
+                    OnlySaveImage = true;
+                    Agregar.Content = "ACTUALIZAR IMAGEN";
+                }
             }
         }
         private void SaveNewImage()
@@ -357,6 +432,7 @@ namespace ItemsEditor
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
                 ItemID = 0;
+                Borrar.IsEnabled = false;
                 OnlySaveImage = false;
                 TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
                 UserImageFile = null;
@@ -396,6 +472,7 @@ namespace ItemsEditor
                 ArticuloSeleccionado = null;
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
+                Borrar.IsEnabled = false;
                 ItemID = 0;
                 OnlySaveImage = false;
                 TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
@@ -431,6 +508,7 @@ namespace ItemsEditor
                 ComboVersion.ItemsSource = null;
                 CategoriaSeleccionada = null;
                 VersionSeleccionada = null;
+                Borrar.IsEnabled = false;
                 ItemID = 0;
                 OnlySaveImage = false;
                 TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
@@ -462,6 +540,7 @@ namespace ItemsEditor
                 ComboVersion.SelectedIndex = -1;
                 ComboVersion.ItemsSource = null;
                 VersionSeleccionada = null;
+                Borrar.IsEnabled = false;
                 ItemID = 0;
                 OnlySaveImage = false;
                 TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
@@ -493,10 +572,12 @@ namespace ItemsEditor
                 TextBoxDescripcion.Text = DescripcionSeleccionada;
                 TextBoxUUID.Text = UUIDSeleccionado;
                 ItemID = item.ID;
+                Borrar.IsEnabled = true;
 
                 if (ItemsFolderPath != null)
                 {
-                    ItemsImageFile = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
+                    string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
+                    ItemsImageFile = Path.Combine(ItemsFolderPath, ShortImageFile);
                     if (File.Exists(ItemsImageFile))
                     {
                         Bitmap bmp = new Bitmap(ItemsImageFile);
@@ -507,6 +588,7 @@ namespace ItemsEditor
                         bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
                         bitmapImage.EndInit();
                         ImageDisplay.Source = bitmapImage;
+                        TextBoxFile.Text = (@"\\" + "ITEMS" + @"\" + ShortImageFile);
                     }
                     else
                     {

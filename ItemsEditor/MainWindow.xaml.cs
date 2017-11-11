@@ -91,7 +91,6 @@ namespace ItemsEditor
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
             ResetFields();
-
         }
         private void Actualizar_Click(object sender, RoutedEventArgs e)
         {
@@ -231,31 +230,9 @@ namespace ItemsEditor
         private void File_Click(object sender, RoutedEventArgs e)
         {
             LoadNewImage();
-            saveImageImagex();
-
         }
 
-        private void saveImageImagex()
-        {
-            string fileName = "test.txt";
-            string sourcePath = @"C:\Users\Rnmkr\Desktop";
-            string targetPath = @"C:\Users\Rnmkr\Desktop\AHK";
 
-            // Use Path class to manipulate file and directory paths.
-            string sourceFile = System.IO.Path.Combine(sourcePath, fileName);
-            string destFile = System.IO.Path.Combine(targetPath, fileName);
-
-            // To copy a folder's contents to a new location:
-            // Create a new target folder, if necessary.
-            if (!System.IO.Directory.Exists(targetPath))
-            {
-                System.IO.Directory.CreateDirectory(targetPath);
-            }
-
-            // To copy a file to another location and 
-            // overwrite the destination file if it already exists.
-            System.IO.File.Copy(sourceFile, destFile, true);
-        }
 
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
@@ -406,6 +383,7 @@ namespace ItemsEditor
             if (ItemsFolderPath == null)
             {
                 System.Windows.MessageBox.Show("No se encontró la carpeta Items. Seleccione la ubicación correspondiente a continuación.", "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                SelectItemsFolder();
                 return;
             }
             else
@@ -641,7 +619,7 @@ namespace ItemsEditor
 
                 if (ItemsFolderPath != null)
                 {
-                    ItemsImageFile = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, DescripcionSeleccionada + ".JPG");
+                    ItemsImageFile = Path.Combine(ItemsFolderPath, ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
                     if (File.Exists(ItemsImageFile))
                     {
                         Bitmap bmp = new Bitmap(ItemsImageFile);
@@ -655,12 +633,14 @@ namespace ItemsEditor
                     }
                     else
                     {
-                        System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + ".", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + " Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        LoadNewImage();
                     }
                 }
                 else
                 {
                     System.Windows.MessageBox.Show("No se encontró la carpeta de imágenes. Seleccione primero la carpeta (ITEMS) correspondiente.", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    SelectItemsFolder();
                 }
             }
         }

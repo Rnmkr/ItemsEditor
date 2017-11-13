@@ -76,7 +76,7 @@ namespace ItemsEditor
                     }
                     catch (Exception)
                     {
-                        System.Windows.MessageBox.Show("No se pudo borrar la Imagen de la base de datos!" + Environment.NewLine + "No se Borrara el registro. Intente nuevamente", "Error eliminando imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("No se pudo borrar la Imagen de la base de datos!" + Environment.NewLine + "No se borrará el registro. Intente nuevamente", "Error eliminando imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 

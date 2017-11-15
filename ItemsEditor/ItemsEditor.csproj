@@ -72,18 +72,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataAccessLayer\Cambio.cs" />
-    <Compile Include="DataAccessLayer\Item.cs" />
-    <Compile Include="DataAccessLayer\Falla.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataAccessLayer\Pedido.cs" />
-    <Compile Include="DataAccessLayer\Personal.cs" />
-    <Compile Include="DataAccessLayer\PRDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -112,6 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\nophoto.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataAccessLayer\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

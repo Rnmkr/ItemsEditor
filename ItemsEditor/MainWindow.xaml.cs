@@ -154,12 +154,65 @@ namespace ItemsEditor
         }
         private void Agregar_Click(object sender, RoutedEventArgs e)
         {
-            if (OnlySaveImage == true)
+            if (ComboProducto.Text.Length > 30)
             {
-                SaveNewImage();
-                ResetFields();
+                System.Windows.MessageBox.Show("PRODUCTO supera los 30 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+            if (ComboModelo.Text.Length > 30)
+            {
+                System.Windows.MessageBox.Show("MODELO supera los 30 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!char.IsDigit(ComboArticulo.Text, ComboArticulo.Text.Length - 1))
+            {
+                System.Windows.MessageBox.Show("ARTICULO solo acepta numeros!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (ComboArticulo.Text.Length > 10)
+            {
+                System.Windows.MessageBox.Show("ARTICULO supera los 10 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (ComboCategoria.Text.Length > 5)
+            {
+                System.Windows.MessageBox.Show("CATEGORIA supera los 5 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (ComboVersion.Text.Length > 30)
+            {
+                System.Windows.MessageBox.Show("VERSION supera los 30 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (TextBoxDescripcion.Text.Length > 30)
+            {
+                System.Windows.MessageBox.Show("DESCRIPCION supera los 30 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (TextBoxUUID.Text.Length > 30)
+            {
+                System.Windows.MessageBox.Show("UUID supera los 30 caracteres permitidos!", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+
+
+
+
+            if (OnlySaveImage == true)
+            {
+                if (!SaveNewImage())
+                {
+                    return;
+                }
+                else
+                {
+                    ResetFields();
+                    return;
+                }
+
+            }
+
 
             PRDB context = new PRDB();
 
@@ -211,13 +264,21 @@ namespace ItemsEditor
                     UUID = TextBoxUUID.Text,
 
                 };
-                context.Item.Add(nuevoItem);
-                context.SaveChanges();
-                SaveNewImage();
-                System.Windows.MessageBox.Show("El item se agregó a la Base de Datos!", "Item Agregado", MessageBoxButton.OK, MessageBoxImage.Information);
-                context.Dispose();
-                ResetFields();
-                return;
+                if (!SaveNewImage())
+                {
+                    return;
+                }
+                else
+                {
+                    context.Item.Add(nuevoItem);
+                    context.SaveChanges();
+
+                    System.Windows.MessageBox.Show("El item se agregó a la Base de Datos!", "Item Agregado", MessageBoxButton.OK, MessageBoxImage.Information);
+                    context.Dispose();
+                    ResetFields();
+                    return;
+                }
+
             }
             catch (Exception ex)
             {
@@ -230,12 +291,10 @@ namespace ItemsEditor
         {
             LoadNewImage();
         }
-
         private void Folder_Click(object sender, RoutedEventArgs e)
         {
             SelectItemsFolder();
         }
-
         private void ResetFields()
         {
             Agregar.Content = "AGREGAR";
@@ -283,7 +342,7 @@ namespace ItemsEditor
             UserImageFile = null;
             ImageDisplay.Source = (new ImageSourceConverter()).ConvertFromString("pack://application:,,,/ItemsEditor;component/Resources/nophoto.png") as ImageSource;
         }
-        private void SelectItemsFolder()
+        private bool SelectItemsFolder()
         {
             WinForms.FolderBrowserDialog folderDialog = new WinForms.FolderBrowserDialog();
             folderDialog.ShowNewFolderButton = false;
@@ -296,7 +355,9 @@ namespace ItemsEditor
                 TextBoxFolder.Text = sPath;
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"\" + "defaultpath.cfg", sPath);
                 ItemsFolderPath = sPath;
+                return true;
             }
+            return false;
         }
 
         private void LoadNewImage()
@@ -329,29 +390,53 @@ namespace ItemsEditor
                 }
             }
         }
-        private void SaveNewImage()
+
+        private bool SaveNewImage()
         {
             if (ItemsFolderPath == null)
             {
-                System.Windows.MessageBox.Show("No se encontró la carpeta Items. Seleccione la ubicación correspondiente a continuación.", "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
-                SelectItemsFolder();
-                return;
+                System.Windows.MessageBox.Show("No se encontró la carpeta Items. Seleccione la ubicación correspondiente!", "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (!SelectItemsFolder())
+                {
+                    return false;
+                }
+                else
+                {
+                    try
+                    {
+                        string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text + ".JPG").ToUpper(); ;
+                        Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
+                        File.Copy(UserImageFile, NewItemsImageFile, true);
+                        System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show(ex.ToString(), "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false;
+                    }
+                }
+
             }
             else
             {
                 try
                 {
-                    string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text + ".JPG");
+                    string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text + ".JPG").ToUpper(); ;
                     Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
                     File.Copy(UserImageFile, NewItemsImageFile, true);
                     System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show(ex.ToString(), "Guardar", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
                 }
             }
         }
+
+
 
         private void TextBoxDescripcion_GotFocus(object sender, RoutedEventArgs e)
         {

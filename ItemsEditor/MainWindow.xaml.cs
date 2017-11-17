@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WinForms = System.Windows.Forms;
+
 namespace ItemsEditor
 {
     /// <summary>
@@ -479,16 +481,19 @@ namespace ItemsEditor
 
         private void ComboProducto_DropDownOpened(object sender, EventArgs e)
         {
-            if (ComboProducto.HasItems == false)
+            using (new WaitCursor())
             {
-                try
+                if (ComboProducto.HasItems == false)
                 {
-                    PRDB context = new PRDB();
-                    ComboProducto.ItemsSource = context.Item.Select(s => s.TipoProducto).Distinct().ToList();
-                }
-                catch (SqlException)
-                {
-                    MessageBox.Show("Ocurrió un error contactando al servidor. Revise la conexión con la Base de Datos.", "Error contactando la Base de Datos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    try
+                    {
+                        PRDB context = new PRDB();
+                        ComboProducto.ItemsSource = context.Item.Select(s => s.TipoProducto).Distinct().ToList();
+                    }
+                    catch (SqlException)
+                    {
+                        MessageBox.Show("Ocurrió un error contactando al servidor. Revise la conexión con la Base de Datos.", "Error contactando la Base de Datos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
                 }
             }
         }
@@ -689,6 +694,27 @@ namespace ItemsEditor
                     SelectItemsFolder();
                 }
             }
+        }
+
+        public class WaitCursor : IDisposable
+        {
+            private Cursor _previousCursor;
+
+            public WaitCursor()
+            {
+                _previousCursor = Mouse.OverrideCursor;
+
+                Mouse.OverrideCursor = Cursors.Wait;
+            }
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                Mouse.OverrideCursor = _previousCursor;
+            }
+
+            #endregion
         }
     }
 }

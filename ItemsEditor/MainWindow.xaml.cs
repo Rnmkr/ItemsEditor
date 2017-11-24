@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WinForms = System.Windows.Forms;
-
+using ItemsEditor.DataAccessLayer;
 namespace ItemsEditor
 {
     /// <summary>

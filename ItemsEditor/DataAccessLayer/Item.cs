@@ -1,4 +1,4 @@
-namespace ItemsEditor
+namespace ItemsEditor.DataAccessLayer
 {
     using System;
     using System.Collections.Generic;

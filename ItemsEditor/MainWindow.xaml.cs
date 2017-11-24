@@ -198,9 +198,6 @@ namespace ItemsEditor
             }
 
 
-
-
-
             if (OnlySaveImage == true)
             {
                 if (!SaveNewImage())
@@ -243,7 +240,7 @@ namespace ItemsEditor
             }
             else
             {
-                UUIDSeleccionado = TextBoxUUID.Text;
+                UUIDSeleccionado = TextBoxUUID.Text.TrimEnd();
             }
 
             if (UserImageFile == null)
@@ -257,13 +254,13 @@ namespace ItemsEditor
             {
                 Item nuevoItem = new Item
                 {
-                    TipoProducto = ComboProducto.Text.ToUpper(),
-                    ModeloProducto = ComboModelo.Text.ToUpper(),
-                    ArticuloItem = ComboArticulo.Text.ToUpper(),
-                    CategoriaItem = ComboCategoria.Text.ToUpper(),
-                    DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
-                    VersionItem = ComboVersion.Text.ToUpper(),
-                    UUID = TextBoxUUID.Text,
+                    TipoProducto = ComboProducto.Text.ToUpper().TrimEnd(),
+                    ModeloProducto = ComboModelo.Text.ToUpper().TrimEnd(),
+                    ArticuloItem = ComboArticulo.Text.ToUpper().TrimEnd(),
+                    CategoriaItem = ComboCategoria.Text.ToUpper().TrimEnd(),
+                    DescripcionItem = TextBoxDescripcion.Text.ToUpper().TrimEnd(),
+                    VersionItem = ComboVersion.Text.ToUpper().TrimEnd(),
+                    UUID = TextBoxUUID.Text.TrimEnd(),
 
                 };
                 if (!SaveNewImage())
@@ -406,7 +403,7 @@ namespace ItemsEditor
                 {
                     try
                     {
-                        string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text, ComboModelo.Text, ComboCategoria.Text, ComboArticulo.Text, ComboVersion.Text + ".JPG").ToUpper(); ;
+                        string NewItemsImageFile = Path.Combine(ItemsFolderPath, ComboProducto.Text.TrimEnd(), ComboModelo.Text.TrimEnd(), ComboCategoria.Text.TrimEnd(), ComboArticulo.Text.TrimEnd(), ComboVersion.Text.TrimEnd() + ".JPG").ToUpper(); ;
                         Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
                         File.Copy(UserImageFile, NewItemsImageFile, true);
                         System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);

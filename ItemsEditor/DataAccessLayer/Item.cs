@@ -12,16 +12,16 @@ namespace ItemsEditor.DataAccessLayer
         public int ID { get; set; }
 
         [Required]
+        [StringLength(10)]
+        public string ArticuloItem { get; set; }
+
+        [Required]
         [StringLength(30)]
         public string TipoProducto { get; set; }
 
         [Required]
         [StringLength(30)]
         public string ModeloProducto { get; set; }
-
-        [Required]
-        [StringLength(10)]
-        public string ArticuloItem { get; set; }
 
         [Required]
         [StringLength(5)]

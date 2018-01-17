@@ -12,20 +12,21 @@ namespace ItemsEditor.DataAccessLayer
         {
         }
 
+
         public virtual DbSet<Item> Item { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Item>()
+                .Property(e => e.ArticuloItem)
+                .IsUnicode(false);
+
             modelBuilder.Entity<Item>()
                 .Property(e => e.TipoProducto)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Item>()
                 .Property(e => e.ModeloProducto)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Item>()
-                .Property(e => e.ArticuloItem)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Item>()

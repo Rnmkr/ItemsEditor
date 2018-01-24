@@ -11,6 +11,9 @@ using System.Windows.Media.Imaging;
 using ItemsEditor.DataAccessLayer;
 using System.Net;
 using readconfig;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace ItemsEditor
 {
@@ -29,11 +32,12 @@ namespace ItemsEditor
         string ArticuloSeleccionado;
         string CategoriaSeleccionada;
         string VersionSeleccionada;
-        string DescripcionSeleccionada = "DESCRIPCION";
-        string UUIDSeleccionado = "UUID";
+        string DescripcionSeleccionada = "INGRESAR DESCRIPCION";
+        string UUIDSeleccionado = "INGRESAR UUID";
         bool OnlySaveImage = false;
         string serverip;
         string netPath;
+        string tmpFile;
         NetworkCredential credentials = new NetworkCredential("EXO", "YQCAkrALNxBN9Mfn");
 
         string ItemsImageFile; //Nombre de la imagen en la carpeta items con la ruta completa
@@ -221,13 +225,13 @@ namespace ItemsEditor
             PRDB context = new PRDB();
 
 
-            if (ComboProducto.Text == "PRODUCTO" || ComboModelo.Text == "MODELO" || ComboArticulo.Text == "ARTICULO" || ComboCategoria.Text == "CATEGORIA" || ComboVersion.Text == "VERSION" || TextBoxDescripcion.Text == "DESCRIPCION")
+            if (ComboProducto.Text == "SELECCIONAR" || ComboModelo.Text == "SELECCIONAR" || ComboArticulo.Text == "SELECCIONAR" || ComboCategoria.Text == "SELECCIONAR" || ComboVersion.Text == "SELECCIONAR" || TextBoxDescripcion.Text == "INGRESAR DESCRIPCION")
             {
                 System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (String.IsNullOrEmpty(ComboArticulo.Text) || String.IsNullOrEmpty(ComboProducto.Text) || String.IsNullOrEmpty(ComboModelo.Text) || String.IsNullOrEmpty(ComboCategoria.Text) || String.IsNullOrEmpty(TextBoxDescripcion.Text) || String.IsNullOrEmpty(ComboVersion.Text) || String.IsNullOrEmpty(TextBoxUUID.Text))
+            if (String.IsNullOrWhiteSpace(ComboArticulo.Text) || String.IsNullOrWhiteSpace(ComboProducto.Text) || String.IsNullOrWhiteSpace(ComboModelo.Text) || String.IsNullOrWhiteSpace(ComboCategoria.Text) || String.IsNullOrWhiteSpace(TextBoxDescripcion.Text) || String.IsNullOrWhiteSpace(ComboVersion.Text) || String.IsNullOrWhiteSpace(TextBoxUUID.Text))
             {
                 System.Windows.MessageBox.Show("No se puede ingresar un registro con campos vacios!" + Environment.NewLine + "El único campo no obligatorio es UUID.", "Guardar nuevo item", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -240,7 +244,7 @@ namespace ItemsEditor
                 return;
             }
 
-            if (TextBoxUUID.Text == "UUID" || String.IsNullOrEmpty(TextBoxUUID.Text))
+            if (TextBoxUUID.Text == "INGRESAR UUID" || String.IsNullOrWhiteSpace(TextBoxUUID.Text))
             {
                 UUIDSeleccionado = "N/A";
             }
@@ -300,13 +304,13 @@ namespace ItemsEditor
         private void ResetFields()
         {
             Agregar.Content = "AGREGAR";
-            ComboProducto.Text = "PRODUCTO";
-            ComboModelo.Text = "MODELO";
-            ComboArticulo.Text = "ARTICULO";
-            ComboCategoria.Text = "CATEGORIA";
-            ComboVersion.Text = "VERSION";
-            TextBoxDescripcion.Text = "DESCRIPCION";
-            TextBoxUUID.Text = "UUID";
+            ComboProducto.Text = "SELECCIONAR";
+            ComboModelo.Text = "SELECCIONAR";
+            ComboArticulo.Text = "SELECCIONAR";
+            ComboCategoria.Text = "SELECCIONAR";
+            ComboVersion.Text = "SELECCIONAR";
+            TextBoxDescripcion.Text = "INGRESAR DESCRIPCION";
+            TextBoxUUID.Text = "INGRESAR UUID";
             TextBoxFile.Text = "SELECCIONAR ARCHIVO .JPG (960X480)";
             //TextBoxFolder.Text = "SELECCIONAR CARPETA DESTINO (ITEMS)";
 
@@ -326,8 +330,8 @@ namespace ItemsEditor
             ArticuloSeleccionado = null;
             CategoriaSeleccionada = null;
             VersionSeleccionada = null;
-            DescripcionSeleccionada = "DESCRIPCION";
-            UUIDSeleccionado = "UUID";
+            DescripcionSeleccionada = "SELECCIONAR";
+            UUIDSeleccionado = "INGRESAR UUID";
 
             Borrar.IsEnabled = false;
             OnlySaveImage = false;
@@ -397,9 +401,80 @@ namespace ItemsEditor
             }
         }
 
+
+        private void ComboProducto_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ComboProducto.Text == "SELECCIONAR")
+            {
+                ComboProducto.Text = "";
+            }
+        }
+        private void ComboProducto_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(ComboProducto.Text))
+            {
+                ComboProducto.Text = "SELECCIONAR";
+            }
+        }
+        private void ComboModelo_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ComboModelo.Text == "SELECCIONAR")
+            {
+                ComboModelo.Text = "";
+            }
+        }
+        private void ComboModelo_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(ComboModelo.Text))
+            {
+                ComboModelo.Text = "SELECCIONAR";
+            }
+        }
+        private void ComboArticulo_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ComboArticulo.Text == "SELECCIONAR")
+            {
+                ComboArticulo.Text = "";
+            }
+        }
+        private void ComboArticulo_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(ComboArticulo.Text))
+            {
+                ComboArticulo.Text = "SELECCIONAR";
+            }
+        }
+        private void ComboCategoria_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ComboCategoria.Text == "SELECCIONAR")
+            {
+                ComboCategoria.Text = "";
+            }
+        }
+        private void ComboCategoria_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(ComboCategoria.Text))
+            {
+                ComboCategoria.Text = "SELECCIONAR";
+            }
+        }
+        private void ComboVersion_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ComboVersion.Text == "SELECCIONAR")
+            {
+                ComboVersion.Text = "";
+            }
+        }
+        private void ComboVersion_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(ComboVersion.Text))
+            {
+                ComboVersion.Text = "SELECCIONAR";
+            }
+        }
         private void TextBoxDescripcion_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (TextBoxDescripcion.Text == "DESCRIPCION")
+            if (TextBoxDescripcion.Text == "INGRESAR DESCRIPCION")
             {
                 TextBoxDescripcion.Text = "";
             }
@@ -411,14 +486,14 @@ namespace ItemsEditor
         }
         private void TextBoxDescripcion_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrEmpty(TextBoxDescripcion.Text))
+            if (String.IsNullOrWhiteSpace(TextBoxDescripcion.Text))
             {
                 TextBoxDescripcion.Text = DescripcionSeleccionada;
             }
         }
         private void TextBoxUUID_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (TextBoxUUID.Text == "UUID")
+            if (TextBoxUUID.Text == "INGRESAR UUID")
             {
                 TextBoxUUID.Text = "";
             }
@@ -430,7 +505,7 @@ namespace ItemsEditor
         }
         private void TextBoxUUID_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (String.IsNullOrEmpty(TextBoxUUID.Text))
+            if (String.IsNullOrWhiteSpace(TextBoxUUID.Text))
             {
                 TextBoxUUID.Text = UUIDSeleccionado;
             }
@@ -440,13 +515,17 @@ namespace ItemsEditor
         {
             using (new WaitCursor())
             {
+                if (SimplePing() == false)
+                {
+                    MessageBox.Show("No se encontró el servidor." + Environment.NewLine + "Revise la conexión con la Base de Datos y reintente.", "Conectando al servidor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 if (ComboProducto.HasItems == false)
                 {
                     try
                     {
                         PRDB context = new PRDB();
-
-
                         ComboProducto.ItemsSource = context.Item.Select(s => s.TipoProducto).Distinct().ToList();
                     }
                     catch (SqlException)
@@ -462,12 +541,12 @@ namespace ItemsEditor
             {
                 ProductoSeleccionado = ComboProducto.SelectedValue.ToString();
 
-                ComboModelo.Text = "MODELO";
-                ComboArticulo.Text = "ARTICULO";
-                ComboCategoria.Text = "CATEGORIA";
-                ComboVersion.Text = "VERSION";
-                TextBoxDescripcion.Text = "DESCRIPCION";
-                TextBoxUUID.Text = "UUID";
+                ComboModelo.Text = "SELECCIONAR";
+                ComboArticulo.Text = "SELECCIONAR";
+                ComboCategoria.Text = "SELECCIONAR";
+                ComboVersion.Text = "SELECCIONAR";
+                TextBoxDescripcion.Text = "INGRESAR DESCRIPCION";
+                TextBoxUUID.Text = "INGRESAR UUID";
                 ComboModelo.SelectedIndex = -1;
                 ComboArticulo.SelectedIndex = -1;
                 ComboCategoria.SelectedIndex = -1;
@@ -490,16 +569,19 @@ namespace ItemsEditor
         }
         private void ComboModelo_DropDownOpened(object sender, EventArgs e)
         {
-            if (ComboProducto.Text == "PRODUCTO" || string.IsNullOrWhiteSpace(ComboProducto.Text))
+            if (ComboProducto.Text == "SELECCIONAR" || string.IsNullOrWhiteSpace(ComboProducto.Text))
             {
                 return;
             }
             else
             {
-                PRDB context = new PRDB();
+                using (new WaitCursor())
+                {
+                    PRDB context = new PRDB();
 
-                ListaModelos = context.Item.Where(w => w.TipoProducto == ProductoSeleccionado).Select(s => s);
-                ComboModelo.ItemsSource = ListaModelos.Select(s => s.ModeloProducto).Distinct().ToList();
+                    ListaModelos = context.Item.Where(w => w.TipoProducto == ProductoSeleccionado).Select(s => s);
+                    ComboModelo.ItemsSource = ListaModelos.Select(s => s.ModeloProducto).Distinct().ToList();
+                }
             }
         }
         private void ComboModelo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -508,11 +590,12 @@ namespace ItemsEditor
             {
                 ModeloSeleccionado = ComboModelo.SelectedValue.ToString();
 
-                ComboArticulo.Text = "ARTICULO";
-                ComboCategoria.Text = "CATEGORIA";
-                ComboVersion.Text = "VERSION";
-                TextBoxDescripcion.Text = "DESCRIPCION";
-                TextBoxUUID.Text = "UUID";
+
+                ComboArticulo.Text = "SELECCIONAR";
+                ComboCategoria.Text = "SELECCIONAR";
+                ComboVersion.Text = "SELECCIONAR";
+                TextBoxDescripcion.Text = "INGRESAR DESCRIPCION";
+                TextBoxUUID.Text = "INGRESAR UUID";
                 ComboArticulo.SelectedIndex = -1;
                 ComboCategoria.SelectedIndex = -1;
                 ComboVersion.SelectedIndex = -1;
@@ -532,14 +615,17 @@ namespace ItemsEditor
         }
         private void ComboArticulo_DropDownOpened(object sender, EventArgs e)
         {
-            if (ComboModelo.Text == "MODELO" || string.IsNullOrWhiteSpace(ComboModelo.Text))
+            if (ComboModelo.Text == "SELECCIONAR" || string.IsNullOrWhiteSpace(ComboModelo.Text))
             {
                 return;
             }
             else
             {
-                ListaArticulos = ListaModelos.Where(w => w.ModeloProducto == ModeloSeleccionado).Select(s => s);
-                ComboArticulo.ItemsSource = ListaArticulos.Select(s => s.ArticuloItem).Distinct().ToList();
+                using (new WaitCursor())
+                {
+                    ListaArticulos = ListaModelos.Where(w => w.ModeloProducto == ModeloSeleccionado).Select(s => s);
+                    ComboArticulo.ItemsSource = ListaArticulos.Select(s => s.ArticuloItem).Distinct().ToList();
+                }
             }
         }
         private void ComboArticulo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -548,10 +634,10 @@ namespace ItemsEditor
             {
                 ArticuloSeleccionado = ComboArticulo.SelectedValue.ToString();
 
-                ComboCategoria.Text = "CATEGORIA";
-                ComboVersion.Text = "VERSION";
-                TextBoxDescripcion.Text = "DESCRIPCION";
-                TextBoxUUID.Text = "UUID";
+                ComboCategoria.Text = "SELECCIONAR";
+                ComboVersion.Text = "SELECCIONAR";
+                TextBoxDescripcion.Text = "INGRESAR DESCRIPCION";
+                TextBoxUUID.Text = "INGRESAR UUID";
                 ComboCategoria.SelectedIndex = -1;
                 ComboVersion.SelectedIndex = -1;
                 ComboCategoria.ItemsSource = null;
@@ -568,14 +654,17 @@ namespace ItemsEditor
         }
         private void ComboCategoria_DropDownOpened(object sender, EventArgs e)
         {
-            if (ComboArticulo.Text == "ARTICULO" || string.IsNullOrWhiteSpace(ComboArticulo.Text))
+            if (ComboArticulo.Text == "SELECCIONAR" || string.IsNullOrWhiteSpace(ComboArticulo.Text))
             {
                 return;
             }
             else
             {
-                ListaCategorias = ListaArticulos.Where(w => w.ArticuloItem == ArticuloSeleccionado).Select(s => s);
-                ComboCategoria.ItemsSource = ListaCategorias.Select(s => s.CategoriaItem).Distinct().ToList();
+                using (new WaitCursor())
+                {
+                    ListaCategorias = ListaArticulos.Where(w => w.ArticuloItem == ArticuloSeleccionado).Select(s => s);
+                    ComboCategoria.ItemsSource = ListaCategorias.Select(s => s.CategoriaItem).Distinct().ToList();
+                }
             }
         }
         private void ComboCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -584,9 +673,9 @@ namespace ItemsEditor
             {
                 CategoriaSeleccionada = ComboCategoria.SelectedValue.ToString();
 
-                ComboVersion.Text = "VERSION";
-                TextBoxDescripcion.Text = "DESCRIPCION";
-                TextBoxUUID.Text = "UUID";
+                ComboVersion.Text = "SELECCIONAR";
+                TextBoxDescripcion.Text = "INGRESAR DESCRIPCION";
+                TextBoxUUID.Text = "INGRESAR UUID";
                 ComboVersion.SelectedIndex = -1;
                 ComboVersion.ItemsSource = null;
                 VersionSeleccionada = null;
@@ -600,61 +689,77 @@ namespace ItemsEditor
         }
         private void ComboVersion_DropDownOpened(object sender, EventArgs e)
         {
-            if (ComboCategoria.Text == "CATEGORIA" || string.IsNullOrWhiteSpace(ComboCategoria.Text))
+            if (ComboCategoria.Text == "SELECCIONAR" || string.IsNullOrWhiteSpace(ComboCategoria.Text))
             {
                 return;
             }
             else
             {
-                ListaVersiones = ListaCategorias.Where(w => w.CategoriaItem == CategoriaSeleccionada).Select(s => s);
-                ComboVersion.ItemsSource = ListaCategorias.Select(s => s.VersionItem).Distinct().ToList();
+                using (new WaitCursor())
+                {
+                    ListaVersiones = ListaCategorias.Where(w => w.CategoriaItem == CategoriaSeleccionada).Select(s => s);
+                    ComboVersion.ItemsSource = ListaCategorias.Select(s => s.VersionItem).Distinct().ToList();
+                }
             }
         }
         private void ComboVersion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboVersion.SelectedValue != null)
+            using (new WaitCursor())
             {
-                VersionSeleccionada = ComboVersion.SelectedValue.ToString();
-
-                Item item = ListaVersiones.Where(w => w.VersionItem == VersionSeleccionada).Select(s => s).Single();
-                DescripcionSeleccionada = item.DescripcionItem;
-                UUIDSeleccionado = item.UUID;
-                TextBoxDescripcion.Text = DescripcionSeleccionada;
-                TextBoxUUID.Text = UUIDSeleccionado;
-                ItemID = item.ID;
-                Borrar.IsEnabled = true;
-
-                if (netPath != null)
+                if (SimplePing() == false)
                 {
-                    using (new NetworkConnection(serverip, credentials))
-                    {
-                        string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
-                        ItemsImageFile = Path.Combine(netPath, ShortImageFile);
+                    MessageBox.Show("No se encontró el servidor." + Environment.NewLine + "Revise la conexión con la Base de Datos y reintente.", "Conectando al servidor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                        if (File.Exists(ItemsImageFile))
+                if (ComboVersion.SelectedValue != null)
+                {
+                    VersionSeleccionada = ComboVersion.SelectedValue.ToString();
+
+                    Item item = ListaVersiones.Where(w => w.VersionItem == VersionSeleccionada).Select(s => s).Single();
+                    DescripcionSeleccionada = item.DescripcionItem;
+                    UUIDSeleccionado = item.UUID;
+                    TextBoxDescripcion.Text = DescripcionSeleccionada;
+                    TextBoxUUID.Text = UUIDSeleccionado;
+                    ItemID = item.ID;
+                    Borrar.IsEnabled = true;
+
+                    if (netPath != null)
+                    {
+                        using (new NetworkConnection(serverip, credentials))
                         {
-                            Bitmap bmp = new Bitmap(ItemsImageFile);
-                            MemoryStream memoryStream = new MemoryStream();
-                            bmp.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                            BitmapImage bitmapImage = new BitmapImage();
-                            bitmapImage.BeginInit();
-                            bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
-                            bitmapImage.EndInit();
-                            ImageDisplay.Source = bitmapImage;
-                            TextBoxFile.Text = (@"\\" + "ITEMS" + @"\" + ShortImageFile);
-                        }
-                        else
-                        {
-                            System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + Environment.NewLine + "Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            LoadNewImage();
-                            OnlySaveImage = true;
-                            Agregar.Content = "ACTUALIZAR IMAGEN";
+                            string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
+                            ItemsImageFile = Path.Combine(netPath, ShortImageFile);
+
+                            if (File.Exists(ItemsImageFile))
+                            {
+                                string uniqueFileName = $@"{Guid.NewGuid()}.JPG";
+                                tmpFile = Path.Combine(Path.GetTempPath(), uniqueFileName);
+                                File.Copy(ItemsImageFile, tmpFile, true);
+
+                                Bitmap bmp = new Bitmap(tmpFile);
+                                MemoryStream memoryStream = new MemoryStream();
+                                bmp.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                                BitmapImage bitmapImage = new BitmapImage();
+                                bitmapImage.BeginInit();
+                                bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
+                                bitmapImage.EndInit();
+                                ImageDisplay.Source = bitmapImage;
+                                TextBoxFile.Text = (@"\\" + "ITEMS" + @"\" + ShortImageFile);
+                            }
+                            else
+                            {
+                                System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + Environment.NewLine + "Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                LoadNewImage();
+                                OnlySaveImage = true;
+                                Agregar.Content = "ACTUALIZAR IMAGEN";
+                            }
                         }
                     }
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("No se encontró la carpeta de imágenes. Verifique que el servidor este en linea y reintente", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    else
+                    {
+                        System.Windows.MessageBox.Show("No se encontró la carpeta de imágenes. Verifique que el servidor este en linea y reintente", "Actualizar item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
                 }
             }
         }
@@ -679,8 +784,22 @@ namespace ItemsEditor
 
             #endregion
         }
+        public static bool SimplePing()
+        {
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PRDB"].ConnectionString.ToString();
+            string ServerIP = connectionString.Between("data source=", ";initial");
+            Ping pingSender = new Ping();
+            PingReply reply = pingSender.Send(ServerIP);
 
-
+            if (reply.Status == IPStatus.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
     }
 }

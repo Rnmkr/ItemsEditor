@@ -20,7 +20,7 @@ public class NetworkConnection : IDisposable
             RemoteName = networkName
         };
 
-        var userName = string.IsNullOrEmpty(credentials.Domain)
+        var userName = String.IsNullOrWhiteSpace(credentials.Domain)
             ? credentials.UserName
             : string.Format(@"{0}\{1}", credentials.Domain, credentials.UserName);
 

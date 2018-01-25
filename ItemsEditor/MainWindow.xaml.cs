@@ -11,8 +11,6 @@ using System.Windows.Media.Imaging;
 using ItemsEditor.DataAccessLayer;
 using System.Net;
 using readconfig;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 
@@ -224,7 +222,6 @@ namespace ItemsEditor
 
 
             PRDB context = new PRDB();
-
 
             if (ComboProducto.Text == "SELECCIONAR" || ComboModelo.Text == "SELECCIONAR" || ComboArticulo.Text == "SELECCIONAR" || ComboCategoria.Text == "SELECCIONAR" || ComboVersion.Text == "SELECCIONAR" || TextBoxDescripcion.Text == "INGRESAR DESCRIPCION")
             {
@@ -765,6 +762,42 @@ namespace ItemsEditor
             }
         }
 
+        private void ComboProducto_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void ComboModelo_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void ComboArticulo_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void ComboCategoria_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void ComboVersion_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void TextBoxDescripcion_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+        private void TextBoxUUID_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
         public class WaitCursor : IDisposable
         {
             private Cursor _previousCursor;
@@ -800,48 +833,6 @@ namespace ItemsEditor
             {
                 return false;
             }
-        }
-
-        private void ComboProducto_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void ComboModelo_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void ComboArticulo_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void ComboCategoria_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void ComboVersion_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void TextBoxDescripcion_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
-        }
-
-        private void TextBoxUUID_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
-            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

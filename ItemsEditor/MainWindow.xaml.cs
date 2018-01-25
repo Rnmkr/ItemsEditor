@@ -816,7 +816,7 @@ namespace ItemsEditor
 
         private void ComboArticulo_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            Regex regex = new Regex("[^0-9]");
             e.Handled = regex.IsMatch(e.Text);
         }
 

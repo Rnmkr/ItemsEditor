@@ -14,6 +14,7 @@ using readconfig;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 
 namespace ItemsEditor
 {
@@ -268,9 +269,9 @@ namespace ItemsEditor
                     ModeloProducto = ComboModelo.Text.ToUpper().TrimEnd(),
                     ArticuloItem = ComboArticulo.Text.ToUpper().TrimEnd(),
                     CategoriaItem = ComboCategoria.Text.ToUpper().TrimEnd(),
-                    DescripcionItem = TextBoxDescripcion.Text.ToUpper().TrimEnd(),
+                    DescripcionItem = TextBoxDescripcion.Text.ToUpper(),
                     VersionItem = ComboVersion.Text.ToUpper().TrimEnd(),
-                    UUID = TextBoxUUID.Text.TrimEnd(),
+                    UUID = UUIDSeleccionado,
 
                 };
                 if (!SaveNewImage())
@@ -698,7 +699,7 @@ namespace ItemsEditor
                 using (new WaitCursor())
                 {
                     ListaVersiones = ListaCategorias.Where(w => w.CategoriaItem == CategoriaSeleccionada).Select(s => s);
-                    ComboVersion.ItemsSource = ListaCategorias.Select(s => s.VersionItem).Distinct().ToList();
+                    ComboVersion.ItemsSource = ListaVersiones.Select(s => s.VersionItem).Distinct().ToList();
                 }
             }
         }
@@ -708,7 +709,7 @@ namespace ItemsEditor
             {
                 if (SimplePing() == false)
                 {
-                    MessageBox.Show("No se encontró el servidor." + Environment.NewLine + "Revise la conexión con la Base de Datos y reintente.", "Conectando al servidor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Se perdió la conexion con el servidor." + Environment.NewLine + "Revise la conexión con la Base de Datos y reintente.", "Conectando al servidor", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -801,5 +802,46 @@ namespace ItemsEditor
             }
         }
 
+        private void ComboProducto_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void ComboModelo_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void ComboArticulo_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void ComboCategoria_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void ComboVersion_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void TextBoxDescripcion_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void TextBoxUUID_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9a-zA-Z-]");
+            e.Handled = regex.IsMatch(e.Text);
+        }
     }
 }

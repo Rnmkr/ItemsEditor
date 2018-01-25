@@ -16,4 +16,3 @@ D:\VSprojects\ItemsEditor\ItemsEditor\obj\Release\ItemsEditor.Properties.Resourc
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Release\ItemsEditor.csproj.GenerateResource.Cache
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Release\ItemsEditor.exe
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Release\ItemsEditor.pdb
-D:\VSprojects\ItemsEditor\ItemsEditor\obj\Release\IPConf.g.cs

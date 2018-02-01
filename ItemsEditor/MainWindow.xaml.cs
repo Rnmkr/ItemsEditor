@@ -820,17 +820,38 @@ namespace ItemsEditor
         }
         public static bool SimplePing()
         {
-            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PRDB"].ConnectionString.ToString();
-            string ServerIP = connectionString.Between("data source=", ";initial");
-            Ping pingSender = new Ping();
-            PingReply reply = pingSender.Send(ServerIP);
+            //string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PRDB"].ConnectionString.ToString();
+            //string ServerIP = connectionString.Between("data source=", ";initial");
+            //Ping pingSender = new Ping();
+            //PingReply reply = pingSender.Send(ServerIP);
 
-            if (reply.Status == IPStatus.Success)
+            //if (reply.Status == IPStatus.Success)
+            //{
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PRDB"].ConnectionString.ToString();
+            string HostName = connectionString.Between("data source=", ";initial");
+            try
             {
-                return true;
+                IPAddress[] ip = Dns.GetHostAddresses(HostName);
+                Ping pingSender = new Ping();
+                PingReply reply = pingSender.Send(ip[0]);
+                if (reply.Status == IPStatus.Success)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (Exception)
             {
+                MessageBox.Show("No se encontró el servidor, compruebe que esté online,");
                 return false;
             }
         }

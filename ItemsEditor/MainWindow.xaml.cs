@@ -37,7 +37,7 @@ namespace ItemsEditor
         string serverip;
         string netPath;
         string tmpFile;
-        NetworkCredential credentials = new NetworkCredential("EXO", "YQCAkrALNxBN9Mfn");
+        //NetworkCredential credentials = new NetworkCredential("EXO", "YQCAkrALNxBN9Mfn");
 
         string ItemsImageFile; //Nombre de la imagen en la carpeta items con la ruta completa
         string UserImageFile; //Nombre de la imagen seleccionada por el usuario con la ruta completa
@@ -50,7 +50,7 @@ namespace ItemsEditor
 
             string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PRDB"].ConnectionString.ToString();
             serverip = @"\\" + connectionString.Between("data source=", ";initial");
-            netPath = serverip + @"\rma$\items\";
+            netPath = serverip + @"\items$\";
         }
 
         private void Borrar_Click(object sender, RoutedEventArgs e)
@@ -111,10 +111,10 @@ namespace ItemsEditor
 
             if (!Directory.EnumerateFiles(ArticuloFolder).Any())
             {
-                using (new NetworkConnection(serverip, credentials))
-                {
+                //using (new NetworkConnection(serverip, credentials))
+                //{
                     Directory.Delete(ArticuloFolder, false);
-                }
+                //}
             }
             else
             {
@@ -123,10 +123,10 @@ namespace ItemsEditor
 
             if (!Directory.EnumerateFiles(CategoriaFolder).Any())
             {
-                using (new NetworkConnection(serverip, credentials))
-                {
+                //using (new NetworkConnection(serverip, credentials))
+                //{
                     Directory.Delete(CategoriaFolder, false);
-                }
+                //}
             }
             else
             {
@@ -135,10 +135,10 @@ namespace ItemsEditor
 
             if (!Directory.EnumerateDirectories(ModeloFolder).Any())
             {
-                using (new NetworkConnection(serverip, credentials))
-                {
+                //using (new NetworkConnection(serverip, credentials))
+                //{
                     Directory.Delete(ModeloFolder, false);
-                }
+                //}
             }
             else
             {
@@ -148,10 +148,10 @@ namespace ItemsEditor
             if (!Directory.EnumerateDirectories(ProductoFolder).Any())
             {
 
-                using (new NetworkConnection(serverip, credentials))
-                {
+                //using (new NetworkConnection(serverip, credentials))
+                //{
                     Directory.Delete(ProductoFolder, false);
-                }
+                //}
             }
             else
             {
@@ -383,14 +383,14 @@ namespace ItemsEditor
 
             try
             {
-                using (new NetworkConnection(serverip, credentials))
-                {
+                //using (new NetworkConnection(serverip, credentials))
+                //{
                     string NewItemsImageFile = Path.Combine(netPath, ComboProducto.Text.TrimEnd(), ComboModelo.Text.TrimEnd(), ComboCategoria.Text.TrimEnd(), ComboArticulo.Text.TrimEnd(), ComboVersion.Text.TrimEnd() + ".JPG").ToUpper(); ;
                     Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
                     File.Copy(UserImageFile, NewItemsImageFile, true);
                     System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return true;
-                }
+                //}
             }
             catch (Exception)
             {
@@ -724,8 +724,8 @@ namespace ItemsEditor
 
                     if (netPath != null)
                     {
-                        using (new NetworkConnection(serverip, credentials))
-                        {
+                        //using (new NetworkConnection(serverip, credentials))
+                        //{
                             string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
                             ItemsImageFile = Path.Combine(netPath, ShortImageFile);
 
@@ -743,7 +743,7 @@ namespace ItemsEditor
                                 bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
                                 bitmapImage.EndInit();
                                 ImageDisplay.Source = bitmapImage;
-                                TextBoxFile.Text = (@"\\" + "ITEMS" + @"\" + ShortImageFile);
+                                TextBoxFile.Text = (@"\\ITEMS\" + ShortImageFile);
                             }
                             else
                             {
@@ -752,7 +752,7 @@ namespace ItemsEditor
                                 OnlySaveImage = true;
                                 Agregar.Content = "ACTUALIZAR IMAGEN";
                             }
-                        }
+                        //}
                     }
                     else
                     {

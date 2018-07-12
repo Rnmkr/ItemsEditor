@@ -23,9 +23,9 @@
                 <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.InfoColorKey}}"/>
             </TextBox.Background>
         </TextBox>
-        <Button Name="Borrar" Content="BORRAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,466,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Borra la entrada del Item de la Base de Datos." Click="Borrar_Click"/>
-        <Button Name="Reset" Content="RESETEAR CAMPOS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,437,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Vuelve todos los campos de este formulario a su estado inicial." Click="Reset_Click"/>
-        <Button Name="Agregar" Content="AGREGAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="10,495,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Agrega el Item a la Base de Datos." Click="Agregar_Click"/>
+        <Button Name="Borrar" Content="BORRAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="153" Margin="10,466,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Borra la entrada del Item de la Base de Datos." Click="Borrar_Click"/>
+        <Button Name="Reset" Content="RESETEAR CAMPOS" HorizontalAlignment="Left" VerticalAlignment="Top" Width="153" Margin="10,437,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Vuelve todos los campos de este formulario a su estado inicial." Click="Reset_Click"/>
+        <Button Name="Agregar" Content="AGREGAR" HorizontalAlignment="Left" VerticalAlignment="Top" Width="142" Margin="168,466,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Agrega el Item a la Base de Datos." Click="Agregar_Click"/>
         <!--<Grid Name="GridPB" HorizontalAlignment="Center" Visibility="Hidden" VerticalAlignment="Center" Background="Black">
             <ProgressBar HorizontalContentAlignment="Center" IsIndeterminate="True" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" Height="32"/>
             <TextBlock FontFamily="Consolas" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">Conectando a la base de datos...</TextBlock>
@@ -42,5 +42,6 @@
         <Label Content="CATEGORIA" HorizontalAlignment="Left" Margin="10,195,0,0" VerticalAlignment="Top" Width="300" FontFamily="Consolas" FontWeight="Bold" FontSize="10" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
         <Label Content="DESCRIPCION" HorizontalAlignment="Left" Margin="10,317,0,0" VerticalAlignment="Top" Width="300" FontFamily="Consolas" FontWeight="Bold" FontSize="10" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
         <Label Content="UUID" HorizontalAlignment="Left" Margin="10,375,0,0" VerticalAlignment="Top" Width="300" FontFamily="Consolas" FontWeight="Bold" FontSize="10" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+        <Button x:Name="ButtonListar" Content="VER LISTA" HorizontalAlignment="Left" VerticalAlignment="Top" Width="142" Margin="168,437,0,0" Height="24" FontFamily="Consolas" FontWeight="Bold" FontSize="14" ToolTip="Vuelve todos los campos de este formulario a su estado inicial." Click="ButtonListar_Click"/>
     </Grid>
 </Window>

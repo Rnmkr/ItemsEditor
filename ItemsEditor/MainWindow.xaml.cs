@@ -113,7 +113,7 @@ namespace ItemsEditor
             {
                 //using (new NetworkConnection(serverip, credentials))
                 //{
-                    Directory.Delete(ArticuloFolder, false);
+                Directory.Delete(ArticuloFolder, false);
                 //}
             }
             else
@@ -125,7 +125,7 @@ namespace ItemsEditor
             {
                 //using (new NetworkConnection(serverip, credentials))
                 //{
-                    Directory.Delete(CategoriaFolder, false);
+                Directory.Delete(CategoriaFolder, false);
                 //}
             }
             else
@@ -137,7 +137,7 @@ namespace ItemsEditor
             {
                 //using (new NetworkConnection(serverip, credentials))
                 //{
-                    Directory.Delete(ModeloFolder, false);
+                Directory.Delete(ModeloFolder, false);
                 //}
             }
             else
@@ -150,7 +150,7 @@ namespace ItemsEditor
 
                 //using (new NetworkConnection(serverip, credentials))
                 //{
-                    Directory.Delete(ProductoFolder, false);
+                Directory.Delete(ProductoFolder, false);
                 //}
             }
             else
@@ -385,11 +385,11 @@ namespace ItemsEditor
             {
                 //using (new NetworkConnection(serverip, credentials))
                 //{
-                    string NewItemsImageFile = Path.Combine(netPath, ComboProducto.Text.TrimEnd(), ComboModelo.Text.TrimEnd(), ComboCategoria.Text.TrimEnd(), ComboArticulo.Text.TrimEnd(), ComboVersion.Text.TrimEnd() + ".JPG").ToUpper(); ;
-                    Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
-                    File.Copy(UserImageFile, NewItemsImageFile, true);
-                    System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return true;
+                string NewItemsImageFile = Path.Combine(netPath, ComboProducto.Text.TrimEnd(), ComboModelo.Text.TrimEnd(), ComboCategoria.Text.TrimEnd(), ComboArticulo.Text.TrimEnd(), ComboVersion.Text.TrimEnd() + ".JPG").ToUpper(); ;
+                Directory.CreateDirectory(Path.GetDirectoryName(NewItemsImageFile));
+                File.Copy(UserImageFile, NewItemsImageFile, true);
+                System.Windows.MessageBox.Show("La imagen se asignó correctamente!", "Guardar imagen", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return true;
                 //}
             }
             catch (Exception)
@@ -726,32 +726,32 @@ namespace ItemsEditor
                     {
                         //using (new NetworkConnection(serverip, credentials))
                         //{
-                            string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
-                            ItemsImageFile = Path.Combine(netPath, ShortImageFile);
+                        string ShortImageFile = Path.Combine(ProductoSeleccionado, ModeloSeleccionado, CategoriaSeleccionada, ArticuloSeleccionado, VersionSeleccionada + ".JPG");
+                        ItemsImageFile = Path.Combine(netPath, ShortImageFile);
 
-                            if (File.Exists(ItemsImageFile))
-                            {
-                                string uniqueFileName = $@"{Guid.NewGuid()}.JPG";
-                                tmpFile = Path.Combine(Path.GetTempPath(), uniqueFileName);
-                                File.Copy(ItemsImageFile, tmpFile, true);
+                        if (File.Exists(ItemsImageFile))
+                        {
+                            string uniqueFileName = $@"{Guid.NewGuid()}.JPG";
+                            tmpFile = Path.Combine(Path.GetTempPath(), uniqueFileName);
+                            File.Copy(ItemsImageFile, tmpFile, true);
 
-                                Bitmap bmp = new Bitmap(tmpFile);
-                                MemoryStream memoryStream = new MemoryStream();
-                                bmp.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                                BitmapImage bitmapImage = new BitmapImage();
-                                bitmapImage.BeginInit();
-                                bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
-                                bitmapImage.EndInit();
-                                ImageDisplay.Source = bitmapImage;
-                                TextBoxFile.Text = (@"\\ITEMS\" + ShortImageFile);
-                            }
-                            else
-                            {
-                                System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + Environment.NewLine + "Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
-                                LoadNewImage();
-                                OnlySaveImage = true;
-                                Agregar.Content = "ACTUALIZAR IMAGEN";
-                            }
+                            Bitmap bmp = new Bitmap(tmpFile);
+                            MemoryStream memoryStream = new MemoryStream();
+                            bmp.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                            BitmapImage bitmapImage = new BitmapImage();
+                            bitmapImage.BeginInit();
+                            bitmapImage.StreamSource = new MemoryStream(memoryStream.ToArray());
+                            bitmapImage.EndInit();
+                            ImageDisplay.Source = bitmapImage;
+                            TextBoxFile.Text = (@"\\ITEMS\" + ShortImageFile);
+                        }
+                        else
+                        {
+                            System.Windows.MessageBox.Show("No se encontró la imágen correspondiente a " + TextBoxDescripcion.Text + " de " + ModeloSeleccionado + " version " + VersionSeleccionada + "." + Environment.NewLine + Environment.NewLine + "Seleccione una a continuación.", "Imagen del Item", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            LoadNewImage();
+                            OnlySaveImage = true;
+                            Agregar.Content = "ACTUALIZAR IMAGEN";
+                        }
                         //}
                     }
                     else
@@ -851,9 +851,27 @@ namespace ItemsEditor
             }
             catch (Exception)
             {
-                MessageBox.Show("No se encontró el servidor, compruebe que esté online,");
                 return false;
             }
+        }
+
+        private void ButtonListar_Click(object sender, RoutedEventArgs e)
+        {
+            using (new WaitCursor())
+            {
+                if (SimplePing() == false)
+                {
+                    MessageBox.Show("No se encontró el servidor." + Environment.NewLine + "Revise la conexión con la Base de Datos y reintente.", "Conectando al servidor", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+            PRDB context = new PRDB();
+
+            IQueryable<Item> Listado = context.Item.Select(s => s);
+            ListaDialog ld = new ListaDialog(Listado, netPath);
+
+            ld.ShowDialog();
+
         }
     }
 }

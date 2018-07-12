@@ -69,6 +69,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper\SubStringExtensions.cs" />
+    <Page Include="ImageDisplayDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListaDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,6 +88,12 @@
     <Compile Include="DataAccessLayer\Item.cs" />
     <Compile Include="DataAccessLayer\PRDB.cs" />
     <Compile Include="Helper\NetworkConnection.cs" />
+    <Compile Include="ImageDisplayDialog.xaml.cs">
+      <DependentUpon>ImageDisplayDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListaDialog.xaml.cs">
+      <DependentUpon>ListaDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

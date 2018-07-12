@@ -34,3 +34,7 @@ D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.Properties.Resources
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.csproj.GenerateResource.Cache
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.exe
 D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ItemsEditor.pdb
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ListaDialog.g.cs
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ListaDialog.baml
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ImageDisplayDialog.g.cs
+D:\VSprojects\ItemsEditor\ItemsEditor\obj\Debug\ImageDisplayDialog.baml
